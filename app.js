@@ -1,36 +1,33 @@
-'use strict'
+'use strict';
 
-const express = require('express')
-const scrape = require('./lib/scraper')
-const rateLimit = require('express-rate-limit')
-const res = require('express/lib/response')
-const app = express()
-const port = 8000
-const hostname = 'ridwandev.xyz' || 'localhost'
+const express = require('express');
+const scrape = require('./lib/scraper');
+const rateLimit = require('express-rate-limit');
 
-
+const app = express();
+const port = 8000;
+const hostname = 'ridwandev.xyz' || 'localhost';
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 20
-})
+});
 
 app.get('/', (req, res) => {
-  res.send('<h3>Hello World')
-})
+  res.send('<h3>Hello World</h3>');
+});
 
 const route = express.Router();
 
 route.get('/detik', async (req, res) => {
   try {
-    res.status(200).json(await scrape.detik())
-
-    //res.json(data)
+    const data = await scrape.detik();
+    res.status(200).json(data);
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: 'can\'t scrape detik.com' })
+    console.log(error);
+    res.status(500).json({ error: 'Can\'t scrape detik.com' });
   }
-})
+});
 
 route.get('/animesearch', async (req, res) => {
   const { title } = req.query;
@@ -49,12 +46,20 @@ route.get('/animesearch', async (req, res) => {
 
 route.get('/xnxx', async (req, res) => {
   const { q } = req.query;
-  res.json(await scrape.xnxx(q))
-})
+  try {
+    const searchResults = await scrape.xnxx(q);
+    res.json(searchResults);
+  } catch (error) {
+    res.status(500).send('An error occurred while searching on xnxx.');
+  }
+});
 
-app.use('/api', route)
-app.use(limiter)
+app.use('/api', route);
+app.use(limiter);
 
 app.listen(port || 3000, hostname, () => {
-  console.log('App starting on port ' + hostname + ':' + port)
-})
+  console.log('App starting on ' + hostname + ':' + port);
+});
+
+
+
