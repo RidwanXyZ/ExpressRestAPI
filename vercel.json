@@ -1,5 +1,4 @@
 {
-    "version": 2,
     "builds": [
         {
             "src": "server.js",
@@ -11,4 +10,6 @@
             "src": "/(.*)",
             "dest": "server.js"
         }
-    ]
+    ],
+    "region": ["sin1"]
+}
